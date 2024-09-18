@@ -1,1 +1,36 @@
+{% extends 'main/layout.html' %}
+{% load custom_tags %}
 
+{% block title %}Курсы{% endblock %}
+
+{% block content %}
+<div class="container mt-0">
+    <h1 class="mb-4">Курсы</h1>
+    <div class="row">
+        {% for el in courses %}
+        <div class="col-12 col-sm-6 col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 250px;">
+                    <img src="{{ el.random_image }}" alt="Card image cap" class="img-fluid w-100 h-100"
+                         style="object-fit: cover;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ el.title }}</h5>
+                    <br>
+
+                    {% if user.is_authenticated %}
+                    {% if user|has_group:"Student" %}
+                    <a href="{% url 'course_detail' el.id %}?mode=view" class="btn btn-primary">Подробнее</a>
+
+                    {% elif user|has_group:"Teacher" %}
+                    <a href="{% url 'course_detail' el.id %}?mode=view" class="btn btn-primary">Подробнее</a>
+                    <a href="{% url 'course_detail' el.id %}?mode=edit" class="btn btn-primary">Редактировать</a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

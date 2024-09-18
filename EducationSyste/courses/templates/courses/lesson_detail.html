@@ -1,0 +1,35 @@
+{% extends 'main/layout.html' %}
+{% load custom_tags %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block content %}
+
+<div class="container mt-0">
+    <h1>{{ lesson.title }}</h1>
+    <p>{{ lesson.content }}</p>
+
+    <h2>Задания:</h2>
+    <ul>
+        {% for assignment in assignments %}
+            <li>
+                {% if user.is_authenticated %}
+                    {% if user|has_group:"Student" %}
+                        <a href="{% url 'assignment_detail' assignment.id %}?mode=view">{{ assignment.title }}</a>
+                    {% elif user|has_group:"Teacher" %}
+                        <a href="{% url 'assignment_detail' assignment.id %}?mode=edit">{{ assignment.title }}</a>
+                    {% endif %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if user.is_authenticated and user|has_group:"Teacher" %}
+        <div class="mb-3">
+            <a href="{% url 'create_assignment' lesson.id %}" class="btn btn-info">Добавить задание</a>
+            <a href="{% url 'edit_lesson' lesson.id %}" class="btn btn-warning">Редактировать урок</a>
+            <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-danger">Удалить урок</a>
+            <a href="{% url 'module_detail' lesson.module.id %}" class="btn btn-secondary">Вернуться к модулю</a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
